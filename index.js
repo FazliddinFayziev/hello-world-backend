@@ -1,22 +1,15 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const cors = require('cors');
+const app = express();
+const admin = require('firebase-admin');
 const { Product } = require('./schemas/products');
 const { validateProduct } = require('./validate');
-const cors = require('cors');
 const multer = require('multer');
-const admin = require('firebase-admin');
 const serviceAccount = require('./AccountKey.json');
 
-const app = express();
-const port = 3000;
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'hello-world-90e4a.appspot.com',
-});
-
-const bucket = admin.storage().bucket();
+app.use(express.json());
+app.use(cors());
 
 // Connect to MongoDB
 mongoose
@@ -27,40 +20,71 @@ mongoose
     .then(() => console.log('Database is connected well'))
     .catch((err) => console.log(`There is a problem: ${err}`));
 
-// Configure multer for file uploads
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: 'gs://hello-world-90e4a.appspot.com',
+});
+
+// Configure Multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
-app.use(express.json());
-app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
-app.post('/product', upload.single('image'), async (req, res) => {
+app.post('/upload', upload.array('images'), async (req, res) => {
     try {
+
+        // check validation of product
         const { error } = validateProduct(req.body);
         if (error) {
             return res.send(error.details[0].message);
         }
 
+        // check files, is it uploaded?
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+
+        const bucket = admin.storage().bucket();
+        const filePromises = [];
+
+        for (const file of req.files) {
+            const readyFile = bucket.file(file.originalname);
+            const fileStream = readyFile.createWriteStream({
+                metadata: {
+                    contentType: file.mimetype,
+                },
+            });
+
+            const filePromise = new Promise((resolve, reject) => {
+                fileStream.on('error', (err) => {
+                    console.error(err);
+                    reject(err);
+                });
+
+                fileStream.on('finish', () => {
+                    readyFile.makePublic()
+                        .then(() => {
+                            const imageUrl = `https://storage.googleapis.com/${bucket.name}/${readyFile.name}`;
+                            resolve(imageUrl);
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            reject(err);
+                        });
+                });
+
+                fileStream.end(file.buffer);
+            });
+
+            filePromises.push(filePromise);
+        }
+
+        const imageUrls = await Promise.all(filePromises);
         const { name, category, price, descuz, descru, desceng, size, image } = req.body;
-
-        // Upload the image to Firebase Storage
-        const imageFile = req.file;
-        const uploadedFile = await bucket.upload(imageFile.buffer, {
-            metadata: {
-                contentType: imageFile.mimetype,
-            },
-        });
-
-        // Get the public URL of the uploaded file
-        const imageUrl = await uploadedFile[0].getSignedUrl({
-            action: 'read',
-            expires: '03-01-2500', // Set the expiration date as desired
-        });
-
         const product = new Product({
             name,
             category,
@@ -69,15 +93,18 @@ app.post('/product', upload.single('image'), async (req, res) => {
             descru,
             desceng,
             size,
-            image: imageUrl
+            images: imageUrls
         });
 
         const savedProduct = await product.save();
         res.status(200).send(savedProduct);
+
     } catch (error) {
-        console.log('Error:', error);
-        res.status(500).send('There is an error with status 500');
+        console.error(error);
+        res.status(500).json({ error: 'Failed to upload images' });
     }
 });
 
-app.listen(port, () => console.log(`Server is listening on port http://localhost:${port}`));
+app.listen(3000, function () {
+    console.log('Server is running on port 3000');
+});
