@@ -46,14 +46,12 @@ const productSchema = new Schema({
     },
 
     // image
-    image: {
-        type: Array,
+    images: {
+        type: [String], // Change the type to an array of strings
         required: true,
     },
 });
 
 const Product = mongoose.model('Shirts', productSchema);
-
-exports.productSchema = productSchema;
 exports.Product = Product;
 
