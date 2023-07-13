@@ -62,4 +62,39 @@ router.post('/upload', upload.array('images'), async (req, res) => {
     }
 });
 
+router.put('/product', upload.array('images'), async (req, res) => {
+
+    const { id } = req.query;
+
+    // check validation of product
+    const { error } = validateProduct(req.body);
+    if (error) {
+        return res.send(error.details[0].message);
+    }
+
+    // check files, is it uploaded?
+    const imageUrls = await uploadImage(req.files);
+
+    // check product
+    const productId = await Product.findById(id);
+    if (!productId) {
+        return res.status(404).send("Product ID is not found");
+    }
+
+    // find id of product
+    const product = await Product.findByIdAndUpdate(id, {
+        name: req.body.name,
+        category: req.body.category,
+        price: req.body.price,
+        descuz: req.body.descuz,
+        descru: req.body.descru,
+        desceng: req.body.desceng,
+        size: req.body.size,
+        images: imageUrls
+    }, { new: true });
+
+    product.save();
+    res.send(product)
+});
+
 module.exports = router; 
