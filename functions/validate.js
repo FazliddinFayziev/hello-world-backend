@@ -12,7 +12,7 @@ const JoiSchema = Joi.object({
     descuz: Joi.string().min(2).required(),
     descru: Joi.string().min(2).required(),
     desceng: Joi.string().min(2).required(),
-    size: Joi.array().items(Joi.string()).length(1).required(),
+    size: Joi.array().items(Joi.string()).required(),
 });
 
 exports.validateProduct = validate(JoiSchema)
