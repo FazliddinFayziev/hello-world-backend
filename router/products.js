@@ -6,6 +6,7 @@ const { Product } = require('../schemas/products');
 const { validateProduct } = require('../functions/validate');
 const { uploadImage } = require('../functions/image');
 const multer = require('multer');
+const path = require('path');
 
 
 // =======================================================>
@@ -45,6 +46,7 @@ router.get('/', async (req, res) => {
 // =======================================================>
 // Get Single needed products ( GET SINGLE )
 // =======================================================>
+
 router.get('/single', async (req, res) => {
 
     try {
@@ -53,7 +55,8 @@ router.get('/single', async (req, res) => {
         const { singleId } = req.query
 
         // Check validation of Single Product
-        if (!singleId) return res.status(404).send("Invatid Product ID. There is no such product ID")
+        const product = await Product.findById(singleId)
+        if (!product) return res.status(404).send("Invatid Product ID. There is no such product ID")
 
         // Find Product by ID
         const singleProduct = await Product.findById(singleId)
@@ -70,9 +73,31 @@ router.get('/single', async (req, res) => {
 
 })
 
+// Define file filter function
+const fileFilter = (req, file, cb) => {
+    var ext = path.extname(file.originalname);
+    if (
+        ext !== '.png' &&
+        ext !== '.jpg' &&
+        ext !== '.gif' &&
+        ext !== '.jpeg'
+    ) {
+        req.fileValidationError = 'Only images are allowed.';
+        return cb(null, false);
+    }
+    cb(null, true);
+};
+
 // Configure Multer =================>
+
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
 
 // =======================================================>
 // Post Single product ( POST )
@@ -82,6 +107,11 @@ router.post('/upload', upload.array('images'), async (req, res) => {
 
     try {
 
+        // Image Validation Error
+        if (req.fileValidationError) {
+            return res.status(400).json({ error: req.fileValidationError });
+        }
+
         // check validation of product
         const { error } = validateProduct(req.body);
         if (error) {
@@ -89,7 +119,7 @@ router.post('/upload', upload.array('images'), async (req, res) => {
         }
 
         // upload image logic (funcition)
-        const imageUrls = await uploadImage(req.files);
+        const imageUrls = await uploadImage(req.files, res);
 
         // new Product
         const { name, category, price, descuz, descru, desceng, size } = req.body;
@@ -112,6 +142,7 @@ router.post('/upload', upload.array('images'), async (req, res) => {
 
         // handle error
         res.status(500).json({ error: 'There is a problem' });
+        console.log(error)
 
     }
 
@@ -135,7 +166,7 @@ router.put('/edit', upload.array('images'), async (req, res) => {
         }
 
         // upload image logic (function)
-        const imageUrls = await uploadImage(req.files);
+        const imageUrls = await uploadImage(req.files, res);
 
         // check id of product (is it valid or not ?)
         const productId = await Product.findById(id);
@@ -167,5 +198,25 @@ router.put('/edit', upload.array('images'), async (req, res) => {
     }
 
 });
+
+// =======================================================>
+// Delete Single Product ( DELETE )
+// =======================================================>
+
+router.delete('/delete', async (req, res) => {
+
+    const { deleteId } = req.query
+
+    // check id of product (is it valid or not ?)
+    const productId = await Product.findById(deleteId);
+    if (!productId) {
+        return res.status(404).send("Product ID is not found");
+    }
+
+    const product = await Product.findOneAndDelete(deleteId)
+
+    res.status(200).send(product)
+
+})
 
 module.exports = router; 

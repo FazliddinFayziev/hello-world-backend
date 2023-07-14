@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 
-async function uploadImageArray(images) {
+async function uploadImageArray(images, res) {
+
     if (!images || images.length === 0) {
         return res.status(400).json({ error: 'No image file provided' });
     }
