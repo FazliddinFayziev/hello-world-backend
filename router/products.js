@@ -7,20 +7,6 @@ const { validateProduct } = require('../functions/validate');
 const { uploadImage } = require('../functions/image');
 const { fileFilter } = require('../functions/fileFilter');
 const multer = require('multer');
-const { checkAndDeleteImages } = require('../functions/checkImage');
-
-
-
-// Get All Images
-router.get('/allimages', (req, res) => {
-    try {
-        const images = checkAndDeleteImages();
-        res.send(images);
-    } catch (error) {
-        console.log(error)
-        res.send('There is an error')
-    }
-})
 
 
 // =======================================================>
@@ -204,17 +190,26 @@ router.put('/edit', upload.array('images'), async (req, res) => {
 
 router.delete('/delete', async (req, res) => {
 
-    const { deleteId } = req.query
+    try {
 
-    // check id of product (is it valid or not ?)
-    const productId = await Product.findById(deleteId);
-    if (!productId) {
-        return res.status(404).send("Product ID is not found");
+        const { deleteId } = req.query
+
+        // check id of product (is it valid or not ?)
+        const productId = await Product.findById(deleteId);
+        if (!productId) {
+            return res.status(404).send("Product ID is not found");
+        }
+
+        const product = await Product.findOneAndDelete(deleteId)
+
+        res.status(200).send(product)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
     }
-
-    const product = await Product.findOneAndDelete(deleteId)
-
-    res.status(200).send(product)
 
 })
 
