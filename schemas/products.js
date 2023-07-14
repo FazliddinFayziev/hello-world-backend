@@ -54,6 +54,11 @@ const productSchema = new Schema({
     },
 });
 
+// Models
+
 const Product = mongoose.model('Shirts', productSchema);
+
+
+// Exporting All
 exports.Product = Product;
 

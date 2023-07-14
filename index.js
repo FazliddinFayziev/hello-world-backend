@@ -5,6 +5,7 @@ const app = express();
 const admin = require('firebase-admin');
 const serviceAccount = require('./AccountKey.json');
 const products = require("./router/products");
+const { deleteUnusedImages } = require('./functions/deleteImages')
 
 app.use(express.json());
 app.use(cors());
@@ -27,6 +28,10 @@ admin.initializeApp({
 // Main item
 
 app.use('/api/v1', products);
+
+
+// Check and Delete Unused Images
+setInterval(deleteUnusedImages, 7 * 24 * 60 * 60 * 1000); // 7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
 
 
 app.listen(3000, function () {
