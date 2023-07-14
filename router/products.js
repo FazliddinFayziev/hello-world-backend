@@ -5,8 +5,22 @@ const router = express.Router();
 const { Product } = require('../schemas/products');
 const { validateProduct } = require('../functions/validate');
 const { uploadImage } = require('../functions/image');
+const { fileFilter } = require('../functions/fileFilter');
 const multer = require('multer');
-const path = require('path');
+const { checkAndDeleteImages } = require('../functions/checkImage');
+
+
+
+// Get All Images
+router.get('/allimages', (req, res) => {
+    try {
+        const images = checkAndDeleteImages();
+        res.send(images);
+    } catch (error) {
+        console.log(error)
+        res.send('There is an error')
+    }
+})
 
 
 // =======================================================>
@@ -72,21 +86,6 @@ router.get('/single', async (req, res) => {
     }
 
 })
-
-// Define file filter function
-const fileFilter = (req, file, cb) => {
-    var ext = path.extname(file.originalname);
-    if (
-        ext !== '.png' &&
-        ext !== '.jpg' &&
-        ext !== '.gif' &&
-        ext !== '.jpeg'
-    ) {
-        req.fileValidationError = 'Only images are allowed.';
-        return cb(null, false);
-    }
-    cb(null, true);
-};
 
 // Configure Multer =================>
 

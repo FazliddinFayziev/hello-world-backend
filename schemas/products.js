@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
+// SCHEMA PRODUCT
+
 const productSchema = new Schema({
     // Name
     name: {
@@ -47,7 +49,7 @@ const productSchema = new Schema({
 
     // image
     images: {
-        type: [String], // Change the type to an array of strings
+        type: [String],
         required: true,
     },
 });
