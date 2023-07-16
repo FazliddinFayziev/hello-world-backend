@@ -1,4 +1,5 @@
 const { Product } = require('../schemas/products');
+const { Banner } = require("../schemas/banner");
 
 
 
@@ -24,6 +25,9 @@ async function firebaseImages(bucket) {
 // Function to TARGET THE URL OF IMAGE of PRODUCT ON THE MONGODB 
 
 async function mongoDbImages() {
+
+    // Get Product Images
+
     const products = await Product.find();
     const producImagesSet = new Set();
 
@@ -33,8 +37,23 @@ async function mongoDbImages() {
         }
     }
 
+    // Get Banner Images
+
+    const banners = await Banner.find();
+    const bannerImagesSet = new Set();
+
+    for (let banner of banners) {
+        for (let image of banner.images) {
+            bannerImagesSet.add(image);
+        }
+    }
+
+    // Putting them together
+
     const producImagesArray = Array.from(producImagesSet);
-    return producImagesArray;
+    const bannerImagesArray = Array.from(bannerImagesSet);
+    const readyArray = [...producImagesArray, ...bannerImagesArray];
+    return readyArray;
 }
 
 
@@ -46,7 +65,6 @@ async function mongoDbImages() {
 
 function findUnusedImages(firstArray, secondArray) {
     const firstSet = new Set(secondArray);
-    console.log(firstSet)
     const resultArray = firstArray.filter(element => !firstSet.has(element));
     const cleanedResult = resultArray.map(url => url.replace('https://storage.googleapis.com/hello-world-90e4a.appspot.com/', ''));
     return cleanedResult;

@@ -5,6 +5,7 @@ const app = express();
 const admin = require('firebase-admin');
 const serviceAccount = require('./AccountKey.json');
 const products = require("./router/products");
+const banner = require("./router/banner");
 const { deleteUnusedImages } = require('./functions/deleteImages')
 
 app.use(express.json());
@@ -28,6 +29,7 @@ admin.initializeApp({
 // Main item
 
 app.use('/api/v1', products);
+app.use('/api/v1', banner);
 
 
 // Check and Delete Unused Images
