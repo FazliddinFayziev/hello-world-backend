@@ -23,6 +23,18 @@ const productSchema = new Schema({
         required: true,
     },
 
+    // Colors
+    colors: {
+        type: Array,
+        required: true,
+    },
+
+    // Options
+    option: {
+        type: String,
+        required: true
+    },
+
     // desc uz
     descuz: {
         type: String,
