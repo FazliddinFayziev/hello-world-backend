@@ -50,10 +50,11 @@ router.post('/newbanner', upload.array('images'), async (req, res) => {
         const imageUrls = await uploadImage(req.files, res);
 
         // new Product
-        const { text, number, category } = req.body;
+        const { text, number, link, category } = req.body;
 
         const banner = await new Banner({
             text,
+            link,
             number,
             category,
             images: imageUrls
@@ -97,6 +98,7 @@ router.put('/editbanner', upload.array('images'), async (req, res) => {
     // find id of product and update
     const banner = await Banner.findByIdAndUpdate(bannerId, {
         text: req.body.text,
+        link: req.body.link,
         number: req.body.number,
         category: req.body.category,
         images: imageUrls

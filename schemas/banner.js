@@ -17,6 +17,12 @@ const bannerSchema = new Schema({
         required: true
     },
 
+    // Link
+    link: {
+        type: String,
+        required: true
+    },
+
     // number
     number: {
         type: Number,
