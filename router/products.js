@@ -27,6 +27,7 @@ router.get('/', async (req, res) => {
                 name: product.name,
                 category: product.category,
                 price: product.price,
+                colors: product.colors,
                 images: product.images[0]
             };
         });
@@ -107,11 +108,13 @@ router.post('/upload', upload.array('images'), async (req, res) => {
         const imageUrls = await uploadImage(req.files, res);
 
         // new Product
-        const { name, category, price, descuz, descru, desceng, size } = req.body;
+        const { name, category, price, colors, option, descuz, descru, desceng, size } = req.body;
         const product = new Product({
             name,
             category,
             price,
+            colors,
+            option,
             descuz,
             descru,
             desceng,
@@ -164,6 +167,8 @@ router.put('/edit', upload.array('images'), async (req, res) => {
             name: req.body.name,
             category: req.body.category,
             price: req.body.price,
+            colors: req.body.colors,
+            option: req.body.option,
             descuz: req.body.descuz,
             descru: req.body.descru,
             desceng: req.body.desceng,
