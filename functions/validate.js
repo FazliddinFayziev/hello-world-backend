@@ -27,5 +27,23 @@ const JoiSchemaBanner = Joi.object({
     category: Joi.string().min(2).required()
 });
 
+
+// Validation of Card
+
+const JoiSchemaCard = Joi.object({
+    cardItems: Joi.array().required(),
+    totalPrice: Joi.number().min(0).required(),
+    userInfo: [
+        Joi.object({
+            userName: Joi.string().required(),
+            phoneNumber: Joi.string().required(),
+            avenue: Joi.string().required(),
+            address: Joi.string().required()
+        }).required()
+    ]
+});
+
+
 exports.validateProduct = validate(JoiSchema);
+exports.validateCard = validate(JoiSchemaCard);
 exports.validateBanner = validate(JoiSchemaBanner);

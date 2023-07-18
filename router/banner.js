@@ -11,8 +11,19 @@ const { Banner } = require("../schemas/banner");
 // Get Banner ( GET )
 // =======================================================>
 
-router.get('/getbanner', (req, res) => {
-    res.send("Hello Banner")
+router.get('/getbanner', async (req, res) => {
+
+    try {
+
+        const banner = await Banner.find()
+        res.status(200).send(banner)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
+    }
 })
 
 

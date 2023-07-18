@@ -16,7 +16,7 @@ const CardSchema = Schema({
     },
 
     // User Information
-    UserInfo: [
+    userInfo: [
         {
             // User Name
             userName: {
