@@ -104,8 +104,21 @@ router.post('/upload', upload.array('images'), async (req, res) => {
             return res.send(error.details[0].message);
         }
 
-        // upload image logic (funcition)
-        const imageUrls = await uploadImage(req.files, res);
+        // Extract image URLs from request body
+        const imageUrls = req.body.imageUrls || [];
+
+        // Validate image URLs
+        const isValidImageUrls = imageUrls.every(url => url.startsWith("https://storage.googleapis.com"));
+
+        if (!isValidImageUrls) {
+            return res.status(400).send("Invalid image URLs format");
+        }
+
+        // Upload image logic (function) for file uploads
+        const fileImageUrls = await uploadImage(req.files, res);
+
+        // Combine the file image URLs with the provided URLs
+        const combinedImageUrls = [...imageUrls, ...fileImageUrls];
 
         // new Product
         const { name, category, price, colors, option, descuz, descru, desceng, size } = req.body;
@@ -119,7 +132,7 @@ router.post('/upload', upload.array('images'), async (req, res) => {
             descru,
             desceng,
             size,
-            images: imageUrls
+            images: combinedImageUrls
         });
 
         // save and send product
@@ -153,8 +166,20 @@ router.put('/edit', upload.array('images'), async (req, res) => {
             return res.send(error.details[0].message);
         }
 
-        // upload image logic (function)
-        const imageUrls = await uploadImage(req.files, res);
+        // Extract image URLs from request body
+        const imageUrls = req.body.imageUrls || [];
+
+        // Validate image URLs
+        const isValidImageUrls = imageUrls.every(url => url.startsWith("https://storage.googleapis.com"));
+        if (!isValidImageUrls) {
+            return res.status(400).send("Invalid image URLs format");
+        }
+
+        // Upload image logic (function) for file uploads
+        const fileImageUrls = await uploadImage(req.files, res);
+
+        // Combine the file image URLs with the provided URLs
+        const combinedImageUrls = [...imageUrls, ...fileImageUrls];
 
         // check id of product (is it valid or not ?)
         const productId = await Product.findById(id);
@@ -173,7 +198,7 @@ router.put('/edit', upload.array('images'), async (req, res) => {
             descru: req.body.descru,
             desceng: req.body.desceng,
             size: req.body.size,
-            images: imageUrls
+            images: combinedImageUrls
         }, { new: true });
 
         // save product and send

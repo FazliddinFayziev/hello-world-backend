@@ -64,6 +64,13 @@ const productSchema = new Schema({
         type: [String],
         required: true,
     },
+
+    // Image URLS
+    imageUrls: {
+        type: [String],
+        required: false,
+    }
+
 });
 
 // Models
