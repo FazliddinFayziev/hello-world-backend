@@ -16,6 +16,7 @@ const JoiSchema = Joi.object({
     descru: Joi.string().min(2).required(),
     desceng: Joi.string().min(2).required(),
     size: Joi.array().items(Joi.string()).required(),
+    imageUrls: Joi.array().items(Joi.string()),
 });
 
 // Validation of Banner
