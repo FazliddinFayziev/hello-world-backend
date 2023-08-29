@@ -25,7 +25,7 @@ const bannerSchema = new Schema({
 
     // number
     number: {
-        type: Number,
+        type: String,
         required: true
     },
 
