@@ -121,6 +121,27 @@ router.put('/editbanner', upload.array('images'), async (req, res) => {
 
 })
 
+
+// =======================================================>
+// DELETE Banner ( DELETE )
+// =======================================================>
+
+router.delete('/deletebanner', async (req, res) => {
+
+    const { bannerId } = req.query;
+
+    // check id of product (is it valid or not ?)
+    const bannerProductId = await Banner.findById(bannerId);
+    if (!bannerProductId) {
+        return res.status(404).send("Product ID is not found");
+    }
+
+    const banner = await Banner.findOneAndDelete(bannerId)
+
+    res.status(200).send(banner)
+
+})
+
 // All Exports
 
 module.exports = router; 

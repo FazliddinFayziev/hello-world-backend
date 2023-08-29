@@ -24,6 +24,9 @@ router.get('/getcard', async (req, res) => {
     }
 })
 
+// =======================================================>
+// POST Card Items( POST )
+// =======================================================>
 
 router.post('/postcard', async (req, res) => {
 
