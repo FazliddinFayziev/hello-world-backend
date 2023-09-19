@@ -56,12 +56,16 @@ router.post('/postcard', async (req, res) => {
 
     } catch (error) {
 
-        // handle error
         res.status(500).json({ error: 'There is a problem' });
         console.log(error)
 
     }
 })
+
+
+// =======================================================>
+// DELETE Card Items( DELETE )
+// =======================================================>
 
 
 router.delete('/deletecard', async (req, res) => {
@@ -76,7 +80,7 @@ router.delete('/deletecard', async (req, res) => {
             return res.status(404).send("Card ID is not found");
         }
 
-        const product = await Card.findOneAndDelete(cardId)
+        const product = await Card.findOneAndDelete({ _id: cardId })
 
         res.status(200).send(product)
 
