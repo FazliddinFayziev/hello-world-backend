@@ -28,7 +28,8 @@ router.get('/', async (req, res) => {
                 category: product.category,
                 price: product.price,
                 colors: product.colors,
-                images: product.images[0]
+                images: product.images[0],
+                option: product.options
             };
         });
 
@@ -230,7 +231,7 @@ router.delete('/delete', async (req, res) => {
             return res.status(404).send("Product ID is not found");
         }
 
-        const product = await Product.findOneAndDelete(deleteId)
+        const product = await Product.findOneAndDelete({ _id: deleteId })
 
         res.status(200).send(product)
 

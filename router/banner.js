@@ -136,7 +136,7 @@ router.delete('/deletebanner', async (req, res) => {
         return res.status(404).send("Product ID is not found");
     }
 
-    const banner = await Banner.findOneAndDelete(bannerId)
+    const banner = await Banner.findOneAndDelete({ _id: bannerId })
 
     res.status(200).send(banner)
 

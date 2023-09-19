@@ -7,6 +7,7 @@ const serviceAccount = require('./AccountKey.json');
 const products = require("./router/products");
 const banner = require("./router/banner");
 const card = require("./router/card");
+const qrcode = require("./router/qrcode");
 const { deleteUnusedImages } = require('./functions/deleteImages')
 
 app.use(express.json());
@@ -31,11 +32,12 @@ admin.initializeApp({
 
 app.use('/api/v1', products);
 app.use('/api/v1', banner);
+app.use('/api/v1', qrcode);
 app.use('/api/v1', card);
 
 
 // Check and Delete Unused Images
-setInterval(deleteUnusedImages, 7 * 24 * 60 * 60 * 1000); // 7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+setInterval(deleteUnusedImages, 7 * 24 * 1 * 60 * 1000); // 7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
 
 
 app.listen(3000, function () {

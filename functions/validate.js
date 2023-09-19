@@ -44,7 +44,28 @@ const JoiSchemaCard = Joi.object({
     ]
 });
 
+// Validate QRCODE
+const JoiSchemaQRCode = Joi.object({
+    logoLetter: Joi.string().required().max(2),
+    text: Joi.string().min(0).required(),
+    smallText: Joi.string().min(0).required(),
+    icons: [
+        Joi.object({
+            instagram: Joi.string(),
+            telegram: Joi.string(),
+            facebook: Joi.string(),
+            twitter: Joi.string(),
+            github: Joi.string(),
+            linkedIn: Joi.string(),
+            website: Joi.string(),
+            youtube: Joi.string(),
+        }).required()
+    ]
+});
+
+
 
 exports.validateProduct = validate(JoiSchema);
 exports.validateCard = validate(JoiSchemaCard);
 exports.validateBanner = validate(JoiSchemaBanner);
+exports.validateQRCode = validate(JoiSchemaQRCode);
