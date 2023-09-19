@@ -13,10 +13,9 @@ const multer = require('multer');
 // Get All needed products ( GET )
 // =======================================================>
 
+
 router.get('/', async (req, res) => {
-
     try {
-
         // get products
         const products = await Product.find();
 
@@ -29,21 +28,24 @@ router.get('/', async (req, res) => {
                 price: product.price,
                 colors: product.colors,
                 images: product.images[0],
-                option: product.options
+                option: product.option
             };
         });
 
         // send product
         res.send(formattedProducts);
-
     } catch (error) {
-
         // handle error
         res.status(500).json({ error: 'Failed to retrieve products' });
-
     }
+});
 
-})
+
+
+
+
+
+
 
 // =======================================================>
 // Get Single needed products ( GET SINGLE )
