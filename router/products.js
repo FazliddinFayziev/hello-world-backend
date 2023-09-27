@@ -157,16 +157,14 @@ router.post('/upload', upload.array('images'), async (req, res) => {
 // =======================================================>
 
 router.put('/edit', upload.array('images'), async (req, res) => {
-
     try {
-
-        // get id from query
+        // Get id from query
         const { id } = req.query;
 
-        // check validation of product
+        // Validate product data
         const { error } = validateProduct(req.body);
         if (error) {
-            return res.send(error.details[0].message);
+            return res.status(400).send(error.details[0].message);
         }
 
         // Extract image URLs from request body
@@ -179,19 +177,22 @@ router.put('/edit', upload.array('images'), async (req, res) => {
         }
 
         // Upload image logic (function) for file uploads
-        const fileImageUrls = await uploadImage(req.files, res);
+        let fileImageUrls = [];
+        if (req.files && req.files.length > 0) {
+            fileImageUrls = await uploadImage(req.files, res);
+        }
 
         // Combine the file image URLs with the provided URLs
         const combinedImageUrls = [...imageUrls, ...fileImageUrls];
 
-        // check id of product (is it valid or not ?)
+        // Check if product ID is valid
         const productId = await Product.findById(id);
         if (!productId) {
             return res.status(404).send("Product ID is not found");
         }
 
-        // find id of product and update
-        const product = await Product.findByIdAndUpdate(id, {
+        // Update product data
+        const updatedProductData = {
             name: req.body.name,
             category: req.body.category,
             price: req.body.price,
@@ -202,20 +203,26 @@ router.put('/edit', upload.array('images'), async (req, res) => {
             desceng: req.body.desceng,
             size: req.body.size,
             images: combinedImageUrls
-        }, { new: true });
+        };
 
-        // save product and send
-        product.save();
-        res.send(product)
+        // Update the product
+        const updatedProduct = await Product.findByIdAndUpdate(id, updatedProductData, { new: true });
+
+
+        // Send the updated product
+        const updatedReadyProduct = await updatedProduct.save();
+
+        // Send the updated product
+        res.send(updatedReadyProduct);
 
     } catch (error) {
-
-        // handle error
+        // Handle error
+        console.error(error);
         res.status(500).json({ error: 'There is a problem' });
-
     }
-
 });
+
+
 
 // =======================================================>
 // Delete Single Product ( DELETE )
