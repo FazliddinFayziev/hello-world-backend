@@ -62,11 +62,8 @@ router.get('/single', async (req, res) => {
         const product = await Product.findById(singleId)
         if (!product) return res.status(404).send("Invatid Product ID. There is no such product ID")
 
-        // Find Product by ID
-        const singleProduct = await Product.findById(singleId)
-
         // Send found product
-        res.status(200).send(singleProduct)
+        res.status(200).send(product)
 
     } catch (error) {
 
@@ -104,7 +101,7 @@ router.post('/upload', upload.array('images'), async (req, res) => {
         // check validation of product
         const { error } = validateProduct(req.body);
         if (error) {
-            return res.send(error.details[0].message);
+            return res.status(400).json({ error: error.details[0].message });
         }
 
         // Extract image URLs from request body
@@ -114,7 +111,7 @@ router.post('/upload', upload.array('images'), async (req, res) => {
         const isValidImageUrls = imageUrls.every(url => url.startsWith("https://storage.googleapis.com"));
 
         if (!isValidImageUrls) {
-            return res.status(400).send("Invalid image URLs format");
+            return res.status(400).json({ error: "Invalid image URLs format" });
         }
 
         // Upload image logic (function) for file uploads
@@ -122,6 +119,11 @@ router.post('/upload', upload.array('images'), async (req, res) => {
 
         // Combine the file image URLs with the provided URLs
         const combinedImageUrls = [...imageUrls, ...fileImageUrls];
+
+        // Check if there are no images uploaded
+        if (combinedImageUrls.length === 0) {
+            return res.status(400).json({ error: "Please upload at least one image" });
+        }
 
         // new Product
         const { name, category, price, colors, option, descuz, descru, desceng, size } = req.body;
@@ -145,8 +147,8 @@ router.post('/upload', upload.array('images'), async (req, res) => {
     } catch (error) {
 
         // handle error
+        console.log(error);
         res.status(500).json({ error: 'There is a problem' });
-        console.log(error)
 
     }
 
