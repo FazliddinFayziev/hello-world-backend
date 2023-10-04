@@ -15,6 +15,12 @@ const CardSchema = Schema({
         required: true
     },
 
+    // Shipped Information
+    shipped: {
+        type: Boolean,
+        default: false
+    },
+
     // User Information
     userInfo: [
         {
