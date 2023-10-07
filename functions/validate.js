@@ -34,6 +34,7 @@ const JoiSchemaBanner = Joi.object({
 const JoiSchemaCard = Joi.object({
     cardItems: Joi.array().required(),
     totalPrice: Joi.number().min(0).required(),
+    time: Joi.string().min(2),
     userInfo: [
         Joi.object({
             userName: Joi.string().required(),

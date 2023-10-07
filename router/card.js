@@ -38,11 +38,12 @@ router.post('/postcard', async (req, res) => {
             return res.send(error.details[0].message);
         }
 
-        const { cardItems, totalPrice, userInfo: { userName, phoneNumber, avenue, address } } = req.body;
+        const { cardItems, totalPrice, time, userInfo: { userName, phoneNumber, avenue, address } } = req.body;
 
         const card = new Card({
             cardItems,
             totalPrice,
+            time,
             userInfo: {
                 userName,
                 phoneNumber,
@@ -61,6 +62,33 @@ router.post('/postcard', async (req, res) => {
 
     }
 })
+
+
+// =======================================================>
+// UPDATE Card Items( DELETE )
+// =======================================================>
+
+
+router.put('/updatecart', async (req, res) => {
+    try {
+        const { cardId } = req.query;
+
+        // Check if the cardId is valid
+        const cardItem = await Card.findById(cardId);
+        if (!cardItem) {
+            return res.status(404).send("Card ID is not found");
+        }
+
+        cardItem.shipped = !cardItem.shipped;
+        const updatedProduct = await cardItem.save();
+
+        res.status(200).send(updatedProduct);
+    } catch (error) {
+        // Handle errors
+        res.status(500).json({ error: 'There is a problem' });
+    }
+});
+
 
 
 // =======================================================>

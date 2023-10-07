@@ -21,6 +21,12 @@ const CardSchema = Schema({
         default: false
     },
 
+    // Time:
+    time: {
+        type: String,
+        required: false
+    },
+
     // User Information
     userInfo: [
         {
