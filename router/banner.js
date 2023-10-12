@@ -27,6 +27,33 @@ router.get('/getbanner', async (req, res) => {
 })
 
 
+// =======================================================>
+// Get Single Banner ( GET )
+// =======================================================>
+router.get('/getsinglebanner', async (req, res) => {
+    try {
+
+        const { bannerId } = req.query;
+
+        // check id of product (is it valid or not ?)
+        const bannerProductId = await Banner.findById(bannerId);
+        if (!bannerProductId) {
+            return res.status(404).send("Product ID is not found");
+        }
+
+        const banner = await Banner.findById(bannerId)
+        res.status(200).send(banner)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
+    }
+})
+
+
+
 // Configure Multer =================>
 
 const storage = multer.memoryStorage();
