@@ -8,7 +8,13 @@ const bannerSchema = new Schema({
     // images
     images: {
         type: [String],
-        required: true,
+        required: false,
+    },
+
+    // Image URLS
+    imageUrls: {
+        type: [String],
+        required: false,
     },
 
     // text
