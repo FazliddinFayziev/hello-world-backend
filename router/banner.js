@@ -30,6 +30,7 @@ router.get('/getbanner', async (req, res) => {
 // =======================================================>
 // Get Single Banner ( GET )
 // =======================================================>
+
 router.get('/getsinglebanner', async (req, res) => {
     try {
 
@@ -116,35 +117,63 @@ router.post('/newbanner', upload.array('images'), async (req, res) => {
 
 router.put('/editbanner', upload.array('images'), async (req, res) => {
 
-    const { bannerId } = req.query;
+    try {
 
-    // check validation of product
-    const { error } = validateBanner(req.body);
-    if (error) {
-        return res.send(error.details[0].message);
+        const { bannerId } = req.query;
+
+        // check validation of product
+        const { error } = validateBanner(req.body);
+        if (error) {
+            return res.send(error.details[0].message);
+        }
+
+        // Extract image URLs from request body
+        const imageUrls = req.body.imageUrls || [];
+
+        // Validate image URLs
+        const isValidImageUrls = imageUrls.every(url => url.startsWith("https://storage.googleapis.com"));
+        if (!isValidImageUrls) {
+            return res.status(400).send("Invalid image URLs format");
+        }
+
+        // Upload image logic (function) for file uploads
+        let fileImageUrls = [];
+        if (req.files && req.files.length > 0) {
+            fileImageUrls = await uploadImage(req.files, res);
+        }
+
+        // Combine the file image URLs with the provided URLs
+        const combinedImageUrls = [...imageUrls, ...fileImageUrls];
+
+
+        // check id of product (is it valid or not ?)
+        const bannerProductId = await Banner.findById(bannerId);
+        if (!bannerProductId) {
+            return res.status(404).send("Product ID is not found");
+        }
+
+        // Update product data
+        const updatedBannerData = {
+            text: req.body.text,
+            link: req.body.link,
+            number: req.body.number,
+            category: req.body.category,
+            images: combinedImageUrls
+        };
+
+        // find id of product and update
+        const banner = await Banner.findByIdAndUpdate(bannerId, updatedBannerData, { new: true });
+
+        // save product and send
+        const readyBanner = await banner.save();
+        res.send(readyBanner)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
     }
-
-    // upload image logic (function)
-    const imageUrls = await uploadImage(req.files, res);
-
-    // check id of product (is it valid or not ?)
-    const bannerProductId = await Banner.findById(bannerId);
-    if (!bannerProductId) {
-        return res.status(404).send("Product ID is not found");
-    }
-
-    // find id of product and update
-    const banner = await Banner.findByIdAndUpdate(bannerId, {
-        text: req.body.text,
-        link: req.body.link,
-        number: req.body.number,
-        category: req.body.category,
-        images: imageUrls
-    }, { new: true });
-
-    // save product and send
-    banner.save();
-    res.send(banner)
 
 })
 
@@ -155,17 +184,27 @@ router.put('/editbanner', upload.array('images'), async (req, res) => {
 
 router.delete('/deletebanner', async (req, res) => {
 
-    const { bannerId } = req.query;
+    try {
 
-    // check id of product (is it valid or not ?)
-    const bannerProductId = await Banner.findById(bannerId);
-    if (!bannerProductId) {
-        return res.status(404).send("Product ID is not found");
+        const { bannerId } = req.query;
+
+        // check id of product (is it valid or not ?)
+        const bannerProductId = await Banner.findById(bannerId);
+        if (!bannerProductId) {
+            return res.status(404).send("Product ID is not found");
+        }
+
+        const banner = await Banner.findOneAndDelete({ _id: bannerId })
+
+        res.status(200).send(banner)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
     }
 
-    const banner = await Banner.findOneAndDelete({ _id: bannerId })
-
-    res.status(200).send(banner)
 
 })
 

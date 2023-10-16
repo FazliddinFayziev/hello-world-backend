@@ -25,7 +25,8 @@ const JoiSchemaBanner = Joi.object({
     text: Joi.string().min(2).required(),
     link: Joi.string().min(2).required(),
     number: Joi.string().min(0).required(),
-    category: Joi.string().min(2).required()
+    category: Joi.string().min(2).required(),
+    imageUrls: Joi.array().items(Joi.string()),
 });
 
 
