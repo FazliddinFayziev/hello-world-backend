@@ -12,8 +12,18 @@ router.get('/qrcode', async (req, res) => {
 
     try {
 
-        const qrcode = await QrCode.find()
-        res.status(200).send(qrcode)
+        const qrcodes = await QrCode.find()
+
+        // get and structure needed products
+        const formattedQrCodes = qrcodes.map((qrcode) => {
+            return {
+                id: qrcode._id,
+                logo: qrcode.logoLetter,
+                text: qrcode.text
+            };
+        });
+
+        res.status(200).send(formattedQrCodes)
 
     } catch (error) {
 
