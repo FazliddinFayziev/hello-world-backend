@@ -109,6 +109,66 @@ router.post('/qrcode', async (req, res) => {
 })
 
 
+// =======================================================>
+// EDIT SINGLE QRCODE( PUT )
+// =======================================================>
+
+router.put('/editqrcode', async (req, res) => {
+
+    try {
+
+        // Get id from query
+        const { id } = req.query;
+
+        // Check if product ID is valid
+        const qrcodeId = await QrCode.findById(id);
+        if (!qrcodeId) {
+            return res.status(404).send("QRCode ID is not found");
+        }
+
+        // check validation of product
+        const { error } = validateQRCode(req.body);
+        if (error) {
+            return res.send(error.details[0].message);
+        }
+
+        const { logoLetter, text, smallText, icons: { instagram, telegram, facebook, youtube, twitter, github, linkedIn, website } } = req.body;
+
+        const updatedQrcode = {
+            logoLetter,
+            text,
+            smallText,
+            icons: {
+                instagram,
+                telegram,
+                facebook,
+                twitter,
+                github,
+                linkedIn,
+                website,
+                youtube
+            }
+        };
+
+        // Update the qrcode
+        const updatedcode = await QrCode.findByIdAndUpdate(id, updatedQrcode, { new: true });
+
+
+        // Send the updated qrcode
+        const updatedReadyQrCode = await updatedcode.save();
+
+        // Send the updated qrcode
+        res.send(updatedReadyQrCode);
+
+    } catch (error) {
+
+        res.status(500).json({ error: 'There is a problem' });
+        console.log(error)
+
+    }
+})
+
+
 // All Exports
 
 module.exports = router; 
