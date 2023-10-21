@@ -169,6 +169,34 @@ router.put('/editqrcode', async (req, res) => {
 })
 
 
+// =======================================================>
+// DLETE SINGLE QRCODE( DELETE )
+// =======================================================>
+
+router.delete('/deleteqrcode', async (req, res) => {
+    try {
+
+        const { id } = req.query
+
+        // check id of product (is it valid or not ?)
+        const qrcodeId = await QrCode.findById(id);
+        if (!qrcodeId) {
+            return res.status(404).send("Product ID is not found");
+        }
+
+        const qrcode = await QrCode.findOneAndDelete({ _id: id })
+
+        res.status(200).send(qrcode)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'There is a problem' });
+
+    }
+})
+
+
 // All Exports
 
 module.exports = router; 
