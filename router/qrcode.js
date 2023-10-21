@@ -118,10 +118,10 @@ router.put('/editqrcode', async (req, res) => {
     try {
 
         // Get id from query
-        const { id } = req.query;
+        const { idOfQrcode } = req.query;
 
         // Check if product ID is valid
-        const qrcodeId = await QrCode.findById(id);
+        const qrcodeId = await QrCode.findById(idOfQrcode);
         if (!qrcodeId) {
             return res.status(404).send("QRCode ID is not found");
         }
@@ -151,7 +151,7 @@ router.put('/editqrcode', async (req, res) => {
         };
 
         // Update the qrcode
-        const updatedcode = await QrCode.findByIdAndUpdate(id, updatedQrcode, { new: true });
+        const updatedcode = await QrCode.findByIdAndUpdate(idOfQrcode, updatedQrcode, { new: true });
 
 
         // Send the updated qrcode
