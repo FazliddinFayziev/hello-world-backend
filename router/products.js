@@ -16,8 +16,8 @@ const multer = require('multer');
 
 router.get('/', async (req, res) => {
     try {
-        // get products
-        const products = await Product.find();
+        // get products and sort products
+        const products = await Product.find().sort({ _id: -1 });
 
         // get and structure needed products
         const formattedProducts = products.map((product) => {
