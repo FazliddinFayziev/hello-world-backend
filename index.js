@@ -5,6 +5,7 @@ const app = express();
 const admin = require('firebase-admin');
 const serviceAccount = require('./AccountKey.json');
 const products = require("./router/products");
+const notes = require("./router/notes");
 const banner = require("./router/banner");
 const card = require("./router/card");
 const qrcode = require("./router/qrcode");
@@ -33,6 +34,7 @@ admin.initializeApp({
 app.use('/api/v1', products);
 app.use('/api/v1', banner);
 app.use('/api/v1', qrcode);
+app.use('/api/v1', notes);
 app.use('/api/v1', card);
 
 

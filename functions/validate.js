@@ -47,6 +47,7 @@ const JoiSchemaCard = Joi.object({
 });
 
 // Validate QRCODE
+
 const JoiSchemaQRCode = Joi.object({
     logoLetter: Joi.string().required().max(2),
     text: Joi.string().min(0).required(),
@@ -66,8 +67,17 @@ const JoiSchemaQRCode = Joi.object({
 });
 
 
+// Validate Notes
+
+const JoiSchemaNotes = Joi.object({
+    text: Joi.string().min(2).required(),
+    time: Joi.string().min(2).required(),
+});
+
+
 
 exports.validateProduct = validate(JoiSchema);
 exports.validateCard = validate(JoiSchemaCard);
+exports.validateNotes = validate(JoiSchemaNotes);
 exports.validateBanner = validate(JoiSchemaBanner);
 exports.validateQRCode = validate(JoiSchemaQRCode);
