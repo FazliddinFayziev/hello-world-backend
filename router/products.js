@@ -7,6 +7,35 @@ const { validateProduct } = require('../functions/validate');
 const { uploadImage } = require('../functions/image');
 const { fileFilter } = require('../functions/fileFilter');
 const multer = require('multer');
+const { Card } = require('../schemas/card');
+const { getLastWeekOrders, getWeeklyOrderCounts } = require('../functions/functions');
+
+
+// =======================================================>
+// Get Dashboard ( GET )
+// =======================================================>
+router.get('/dashboard', async (req, res) => {
+    try {
+
+        const products = await Product.find()
+        const card = await Card.find()
+
+        const dashboard = {
+            allProducts: products.length,
+            allOrders: card.length,
+            lastweekOrders: getLastWeekOrders(card).length,
+            getWeeklyOrders: getWeeklyOrderCounts(card)
+        }
+
+        res.send(dashboard)
+
+    } catch (error) {
+
+        // handle error
+        res.status(500).json({ error: 'Failed to retrieve products' });
+
+    }
+})
 
 
 // =======================================================>
