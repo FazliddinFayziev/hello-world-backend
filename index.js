@@ -38,8 +38,9 @@ app.use('/api/v1', notes);
 app.use('/api/v1', card);
 
 
-// Check and Delete Unused Images
-setInterval(deleteUnusedImages, 7 * 24 * 1 * 60 * 1000); // 7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+// Check and delete Function(once in a week)
+setInterval(deleteUnusedImages, 7 * 24 * 60 * 60 * 1000); // 7 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds
+
 
 
 app.listen(3000, function () {
