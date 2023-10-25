@@ -2,6 +2,7 @@
 const { Card } = require('../schemas/card');
 const express = require('express');
 const { validateCard } = require('../functions/validate');
+const { formatCurrentTime } = require('../functions/functions');
 const router = express.Router();
 
 
@@ -43,7 +44,7 @@ router.post('/postcard', async (req, res) => {
         const card = new Card({
             cardItems,
             totalPrice,
-            time,
+            time: formatCurrentTime(),
             userInfo: {
                 userName,
                 phoneNumber,
