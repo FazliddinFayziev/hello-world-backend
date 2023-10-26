@@ -8,7 +8,7 @@ const { uploadImage } = require('../functions/image');
 const { fileFilter } = require('../functions/fileFilter');
 const multer = require('multer');
 const { Card } = require('../schemas/card');
-const { getLastWeekOrders, getWeeklyOrderCounts } = require('../functions/functions');
+const { getLastWeekOrders, getWeeklyOrderCounts, categorizeOrdersIntoWeeks } = require('../functions/functions');
 
 
 // =======================================================>
@@ -24,7 +24,8 @@ router.get('/dashboard', async (req, res) => {
             allProducts: products.length,
             allOrders: card.length,
             lastweekOrders: getLastWeekOrders(card).length,
-            getWeeklyOrders: getWeeklyOrderCounts(card)
+            getWeeklyOrders: getWeeklyOrderCounts(card),
+            getMonthlyOrders: categorizeOrdersIntoWeeks(card)
         }
 
         res.send(dashboard)

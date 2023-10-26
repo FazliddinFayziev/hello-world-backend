@@ -34,11 +34,12 @@ const getWeeklyOrderCounts = (orders) => {
     for (const order of orders) {
         const orderDate = new Date(parseCustomDate(order.time));
         const dayOfWeek = daysOfWeek[orderDate.getUTCDay()];
+        const orderItemsCount = order.cardItems.length;
 
         if (weeklyOrders[dayOfWeek]) {
-            weeklyOrders[dayOfWeek]++;
+            weeklyOrders[dayOfWeek] += orderItemsCount;
         } else {
-            weeklyOrders[dayOfWeek] = 1;
+            weeklyOrders[dayOfWeek] = orderItemsCount;
         }
     }
 
@@ -57,8 +58,36 @@ const getWeeklyOrderCounts = (orders) => {
         Sat: weeklyOrders.Sat,
         Sun: weeklyOrders.Sun
     }
-    return weekOrders;
+    return Object.values(weekOrders);
 }
+
+// Get monthy orders
+const categorizeOrdersIntoWeeks = (orders) => {
+
+    const categorizedOrders = {
+        "Week-1": 0,
+        "Week-2": 0,
+        "Week-3": 0,
+        "Week-4": 0,
+    };
+
+    for (const order of orders) {
+        const orderDate = new Date(parseCustomDate(order.time));
+        const day = orderDate.getDate();
+
+        if (day <= 7) {
+            categorizedOrders["Week-1"] += order.cardItems.length;
+        } else if (day <= 14) {
+            categorizedOrders["Week-2"] += order.cardItems.length;
+        } else if (day <= 21) {
+            categorizedOrders["Week-3"] += order.cardItems.length;
+        } else {
+            categorizedOrders["Week-4"] += order.cardItems.length;
+        }
+    }
+
+    return Object.values(categorizedOrders);
+};
 
 function parseCustomDate(customDate) {
     const [datePart, timePart] = customDate.split(' and ');
@@ -70,3 +99,4 @@ function parseCustomDate(customDate) {
 module.exports.formatCurrentTime = formatCurrentTime
 module.exports.getLastWeekOrders = getLastWeekOrders
 module.exports.getWeeklyOrderCounts = getWeeklyOrderCounts
+module.exports.categorizeOrdersIntoWeeks = categorizeOrdersIntoWeeks
