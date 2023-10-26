@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/getcard', async (req, res) => {
     try {
 
-        const card = await Card.find()
+        const card = await Card.find().sort({ _id: -1 });
         res.status(200).send(card)
 
     } catch (error) {
