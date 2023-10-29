@@ -5,6 +5,32 @@ const { User } = require('../schemas/user');
 const { isAdmin, verifyToken } = require('../middleware/user');
 const { validateUser } = require('../functions/validate');
 
+// =================================================>
+// User INFO. Is user still present or no (GET)
+// =================================================>
+
+router.get('/userinfo', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                userId: user.id,
+                userName: user.userName,
+                admin: user.admin,
+                viewer: user.viewer,
+            },
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+});
+
 // ===========================>
 // Get All User (GET)
 // ===========================>
@@ -129,6 +155,31 @@ router.put('/users/:userId', verifyToken, isAdmin, async (req, res, next) => {
                 viewer: user.viewer
             },
         });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// ===========================>
+//  Delete USER (DELETE)
+// ===========================>
+router.delete('/users/:userId', verifyToken, isAdmin, async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+
+        // Check if the user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found.',
+            });
+        }
+
+        // delete user
+        const deletedUser = await User.findByIdAndDelete({ _id: userId });
+        res.status(200).send(deletedUser);
+
     } catch (err) {
         next(err);
     }
