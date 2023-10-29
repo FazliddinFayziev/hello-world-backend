@@ -74,10 +74,18 @@ const JoiSchemaNotes = Joi.object({
     time: Joi.string().min(2).required(),
 });
 
+// Validate User
+const JoiSchemaUser = Joi.object({
+    userName: Joi.string().min(2).required(),
+    password: Joi.string().min(2).required(),
+});
+
+
 
 
 exports.validateProduct = validate(JoiSchema);
 exports.validateCard = validate(JoiSchemaCard);
+exports.validateUser = validate(JoiSchemaUser);
 exports.validateNotes = validate(JoiSchemaNotes);
 exports.validateBanner = validate(JoiSchemaBanner);
 exports.validateQRCode = validate(JoiSchemaQRCode);
