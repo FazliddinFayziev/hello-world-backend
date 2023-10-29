@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const cors = require('cors');
+const dotenv = require('dotenv');
 const app = express();
 const admin = require('firebase-admin');
 const serviceAccount = require('./AccountKey.json');
@@ -8,9 +9,12 @@ const products = require("./router/products");
 const notes = require("./router/notes");
 const banner = require("./router/banner");
 const card = require("./router/card");
+const user = require("./router/user");
 const qrcode = require("./router/qrcode");
 const { deleteUnusedImages } = require('./functions/deleteImages')
 
+
+dotenv.config();
 app.use(express.json());
 app.use(cors());
 
@@ -36,6 +40,7 @@ app.use('/api/v1', banner);
 app.use('/api/v1', qrcode);
 app.use('/api/v1', notes);
 app.use('/api/v1', card);
+app.use('/api/v1', user);
 
 
 // Check and delete Function(once in a week)
