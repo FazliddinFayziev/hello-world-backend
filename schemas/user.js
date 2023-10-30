@@ -15,10 +15,6 @@ const UserSchema = Schema({
         type: Boolean,
         default: false
     },
-    viewer: {
-        type: Boolean,
-        default: true
-    }
 })
 
 // Model

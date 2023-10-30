@@ -23,7 +23,6 @@ router.get('/userinfo', verifyToken, async (req, res) => {
                 userId: user.id,
                 userName: user.userName,
                 admin: user.admin,
-                viewer: user.viewer,
             },
         });
     } catch (error) {
@@ -103,7 +102,7 @@ router.post('/login', async (req, res, next) => {
 
         // If the user and password match, create and send the JWT token
         const token = jwt.sign(
-            { userId: user.id, userName: user.userName, admin: user.admin, viewer: user.viewer },
+            { userId: user.id, userName: user.userName, admin: user.admin },
             process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
@@ -114,7 +113,6 @@ router.post('/login', async (req, res, next) => {
                 userId: user.id,
                 userName: user.userName,
                 admin: user.admin,
-                viewer: user.viewer,
                 token: token,
             },
         });
@@ -130,7 +128,6 @@ router.post('/login', async (req, res, next) => {
 router.put('/users/:userId', verifyToken, isAdmin, async (req, res, next) => {
     try {
         const { userId } = req.params;
-        const { admin, viewer } = req.body;
 
         // Check if the user exists
         const user = await User.findById(userId);
@@ -142,9 +139,8 @@ router.put('/users/:userId', verifyToken, isAdmin, async (req, res, next) => {
         }
 
         // Update the user's role to admin if admin is true, else set to regular user
-        user.admin = admin;
-        user.viewer = viewer;
-        await user.save(user);
+        user.admin = !user.admin;
+        await user.save();
 
         res.status(200).json({
             success: true,
@@ -152,7 +148,6 @@ router.put('/users/:userId', verifyToken, isAdmin, async (req, res, next) => {
                 userId: user.id,
                 userName: user.userName,
                 admin: user.admin,
-                viewer: user.viewer
             },
         });
     } catch (err) {
