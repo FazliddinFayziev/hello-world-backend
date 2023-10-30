@@ -47,7 +47,7 @@ router.get('/users', verifyToken, isAdmin, async (req, res, next) => {
 // Register New User (POST)
 // ===========================>
 
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', verifyToken, isAdmin, async (req, res, next) => {
     try {
         const { userName, password } = req.body;
 
