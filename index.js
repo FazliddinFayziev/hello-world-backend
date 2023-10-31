@@ -16,7 +16,7 @@ const { deleteUnusedImages } = require('./functions/deleteImages')
 
 dotenv.config();
 app.use(express.json());
-const whitelist = ['https://hw.com.uz']; // allowed origins
+const whitelist = ['https://hw.com.uz', 'https://admin.hw.com.uz']; // allowed origins
 
 const corsOptions = {
     origin: function (origin, callback) {
