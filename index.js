@@ -13,7 +13,6 @@ const user = require("./router/user");
 const qrcode = require("./router/qrcode");
 const { deleteUnusedImages } = require('./functions/deleteImages')
 
-
 dotenv.config();
 app.use(express.json());
 const whitelist = ['https://hw.com.uz', 'https://admin.hw.com.uz']; // allowed origins
