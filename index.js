@@ -13,10 +13,21 @@ const user = require("./router/user");
 const qrcode = require("./router/qrcode");
 const { deleteUnusedImages } = require('./functions/deleteImages')
 
-
 dotenv.config();
 app.use(express.json());
-app.use(cors());
+const whitelist = ['https://hw.com.uz', 'https://admin.hw.com.uz']; // allowed origins
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+};
+
+app.use(cors(corsOptions));
 
 // Connect to MongoDB
 mongoose
