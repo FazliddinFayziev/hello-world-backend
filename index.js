@@ -20,7 +20,7 @@ app.use(cors());
 
 // Connect to MongoDB
 mongoose
-    .connect('mongodb+srv://fazliddin:ZmFmRf4515@cluster0.soswtmt.mongodb.net/products?retryWrites=true&w=majority', {
+    .connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
@@ -30,7 +30,7 @@ mongoose
 // Initialize Firebase Admin SDK
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'gs://hello-world-90e4a.appspot.com',
+    storageBucket: process.env.STORAGE_BUCKET,
 });
 
 // Main item
